@@ -1,18 +1,22 @@
 # INMOS-Link-Driver
 
-Updated INMOS Transputer link driver model for Linux Kernel 3.x.x
+Updated INMOS Transputer link driver model for Linux Kernel 3.16.x
 
 This supports the INMOS B004/B008 series of link adaptors to enable the Linux kernel to communicate with the 1980's/1990's INMOS Transputer hardware. 
 
+## Building the Driver
+
+At first "sudo apt-get install linux-headers-amd64 dkms debhelper"
+Should build cleanly with a simple 'make' command.
+
 ## Using the Driver
 
-Should build cleanly with a simple 'make' command, as long as you have Kernel headers and the kbuild package installed.
-
-After install, run a 'mknod /dev/link0 c 24 0' to build the device file. I've provided a simple bash script which creates the required devices, builds the driver and inserts it into the running kernel; if you've ever compiled akernel module before it's the same process.
+Should build cleanly with a simple 'build' command.
+A package is build and install on your system.
 
 ## Testing
 
-Build and installs cleaning under Debian 7 (32bit) and Linux kernel 3.2.26, as of November 2014.
+Build and installs cleaning under Debian 8 (64bit) and Linux kernel 4.6.0-0.bpo.1-rt-686-pae, as of August 2016.
 
 On insertion of the module, it will scan for the INMOS link adapter at the standard port addresses - you should see something like this in your syslog:
 

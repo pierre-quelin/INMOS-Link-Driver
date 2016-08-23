@@ -1,0 +1,2 @@
+# Change the user rights
+KERNEL=="link[0-1]", GROUP="realtime", MODE="0660"

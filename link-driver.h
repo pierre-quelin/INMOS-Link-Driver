@@ -25,14 +25,14 @@
  * Per POSIX guidelines, this module reserves the LINK and link prefixes
  */
 
-#define LINK_MAJOR		24		/* Major device number */
-#define LINK_NAME		"link"		/* Name of the device to register */
+#define LINK_MAJOR      0     /* Dynamic major by default */
+#define LINK_NAME		"link"      /* Name of the device to register */
 #define LINK_NO			2		/* Number of supported boards */
 
 /*
  * These are the link_table[].flags flags...
  */
-#define LINK_EXIST	 	0x0001		/* Is a B004-Board with at least one 
+#define LINK_EXIST	 	0x0001		/* Is a B004-Board with at least one
 										   Transputer present ? */
 #define LINK_BUSY	  	0x0002		/* Is the B004-board in use ? */
 #define LINK_READ_ABORT		0x0004 		/* abort reading after timeout ? */
@@ -54,7 +54,7 @@
 
 /*
  * timeout for printk'ing a timeout, in jiffies (100ths of a second).
- * This is also used for re-checking error conditions if LINK_READ_ABORT or 
+ * This is also used for re-checking error conditions if LINK_READ_ABORT or
  * LINK_WRITE_ABORT is not set. This is the default behavior for reading.
  * Writing has the timeout enabled per default.
  */
@@ -164,11 +164,6 @@ struct link_struct {
  */
 #define LINK_ASSERT_ANALYSE	0x01	/* switch transputer to analyse-mode */
 #define LINK_DEASSERT_ANALYSE	0x00
-
-/*
- * function prototypes
- */
-extern long link_init(long kmem_start);
 
 #endif
 
