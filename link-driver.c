@@ -59,6 +59,7 @@
 #include <linux/kdev_t.h>
 #include <linux/fs.h>
 #include <linux/device.h>
+#include <linux/jiffies.h>
 
 #include <asm/io.h>
 #include <asm/segment.h>
@@ -143,11 +144,11 @@ static const short link_base_addresses[] = { 0x150, 0x170, 0x190, 0 };
 
 static void link_delay(void)
 {
-	unsigned int	timer;
+	unsigned long	timer;
 	timer = jiffies + (100 / (1000 / HZ));
 	while (1)
 	{
-		if (jiffies > timer){
+		if (time_after(jiffies, timer)){
 			break;
 		}
 		schedule();
@@ -247,8 +248,8 @@ static ssize_t link_read( struct file * file,
                           loff_t *ppos )
 {
 	const unsigned int	minor = MINOR(file_inode(file)->i_rdev);
-	      unsigned int	timer;
-	      unsigned int	sleep_timer;
+	      unsigned long	timer;
+	      unsigned long	sleep_timer;
 	               int	l_count=0;
 	               int	max_sleep;
 	               int	end;
@@ -289,7 +290,7 @@ static ssize_t link_read( struct file * file,
 
 		while (end)
 		{
-			if (timer < jiffies) break;
+			if (time_after(jiffies, timer)) break;
 
 			if ( in(LINK_ISR(minor)) & LINK_READBYTE )
 			{
@@ -305,7 +306,7 @@ static ssize_t link_read( struct file * file,
 				max_sleep = 0;
 			}
 
-			if (sleep_timer < jiffies)
+			if (time_after(jiffies, sleep_timer))
 			{
 				/*
 				 * return if rescheduled more than 100 times - a single byte shouldn't
@@ -387,8 +388,8 @@ static ssize_t link_write( struct file * file,
                            loff_t *ppos )
 {
 	const unsigned int	minor = MINOR(file_inode(file)->i_rdev);
-	      unsigned int	timer;
-	      unsigned int	sleep_timer;
+	      unsigned long	timer;
+	      unsigned long	sleep_timer;
 	               int	l_count = 0;
 	               int	size = count;
 	               int	copy_result;
@@ -452,14 +453,14 @@ static ssize_t link_write( struct file * file,
 				}
 				link_notready_times++;
 
-				if (timer < jiffies)
+				if (time_after(jiffies,timer))
 				{
 					PRINTK("LINK(%d) write() EINVAL! Timed out waiting for Tx register!\n", minor );
 					PRINTK("LINK(%d) [bytes remaining: %zu | notready wait: %d]\n\n", minor, count, link_notready_times);
 					return( -EINVAL );
 				}
 
-				if (sleep_timer < jiffies)
+				if (time_after(jiffies, sleep_timer))
 				{
 
 					/*
